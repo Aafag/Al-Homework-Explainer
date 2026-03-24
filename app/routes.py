@@ -9,6 +9,19 @@ from requests import RequestException
 api = Blueprint("api", __name__, url_prefix="/api")
 
 
+def gemini_error_response(exc: RequestException) -> tuple:
+    status_code = getattr(getattr(exc, "response", None), "status_code", None)
+
+    if status_code == 401:
+        return jsonify({"error": "Gemini authentication failed. Check GEMINI_KEY or GEMINI_API_KEY."}), 502
+    if status_code == 403:
+        return jsonify({"error": "Gemini API access denied for this key or model."}), 502
+    if status_code == 429:
+        return jsonify({"error": "Gemini API quota exceeded. Try again later."}), 502
+
+    return jsonify({"error": "Gemini API request failed."}), 502
+
+
 def serialize_question(doc: dict) -> dict:
     return {
         "id": str(doc["_id"]),
@@ -38,7 +51,9 @@ def create_question() -> tuple:
     try:
         explanation = current_app.gemini_service.generate_explanation(question)
     except RequestException as exc:
-        return jsonify({"error": f"Gemini API request failed: {exc}"}), 502
+        status_code = getattr(getattr(exc, "response", None), "status_code", None)
+        current_app.logger.error("Gemini API request failed with status code: %s", status_code)
+        return gemini_error_response(exc)
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 502
 
@@ -92,4 +107,3 @@ def get_question(question_id: str) -> tuple:
         return jsonify({"error": "Question not found."}), 404
 
     return jsonify(serialize_question(doc)), 200
-
