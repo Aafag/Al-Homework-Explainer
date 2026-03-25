@@ -26,13 +26,11 @@ Containerization
 •	Docker
 CI/CD
 •	GitHub Actions
-Deployment
-•	Render
 
 Team Members and Roles:
 Kareem (60302080) is the Backend Developer. He is responsible for developing the backend API using Flask, implementing routes for submitting questions and retrieving saved questions, and integrating the AI model to generate explanations.
 Aafag (60097832) is the Frontend Developer. She is responsible for designing and implementing the web interface, creating the input form for homework questions, and displaying the AI-generated explanations and saved questions.
-Sulistianto (60301414) handles DevOps and Full-Stack Support. He is responsible for configuring Docker for containerization, setting up the CI/CD pipeline using GitHub Actions, deploying the application to the cloud, and assisting with testing and integration.
+Sulistianto (60301414) handles DevOps and Full-Stack Support. He is responsible for configuring Docker for containerization, setting up the CI pipeline using GitHub Actions, and assisting with testing and integration.
 
 Project Timeline
 Week 11 – Setup and Proposal
@@ -47,11 +45,6 @@ Week 12 – Development
 •	Build frontend interface
 •	Write unit tests
 •	Setup CI pipeline
-Week 13 – Deployment
-•	Complete CI/CD pipeline
-•	Deploy application to cloud
-•	Test live deployment
-•	Prepare presentation
 
 ## DevOps Setup
 
@@ -81,25 +74,6 @@ GitHub Actions runs on every push and pull request:
 Workflow file:
 
 - `.github/workflows/ci.yml`
-
-### Render deployment
-
-This repo includes a `render.yaml` Blueprint for deploying a single Python web service on Render.
-
-Important deployment notes:
-
-- Render installs dependencies with `pip install -r requirements.txt`
-- Render starts the app with `gunicorn --bind 0.0.0.0:$PORT run:app`
-- the frontend is served by Flask, so only one web service is required
-- `MONGODB_URI` and `GEMINI_API_KEY` must be provided as secrets in Render and must never be committed
-
-If you create the service from the Blueprint:
-
-1. Connect the GitHub repo in Render.
-2. Apply `render.yaml`.
-3. Enter secret values for `MONGODB_URI` and `GEMINI_API_KEY`.
-4. Let Render deploy from the default branch after CI checks pass.
-
 
 
 
