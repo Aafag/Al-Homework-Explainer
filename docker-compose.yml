@@ -2,7 +2,7 @@ services:
   app:
     build: .
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       PORT: 5000
       MONGODB_URI: mongodb://mongo:27017/ai_homework_explainer

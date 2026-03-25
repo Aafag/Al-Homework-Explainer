@@ -58,7 +58,7 @@ docker compose up --build
 
 This starts:
 
-- the Flask web app on `http://localhost:5000`
+- the Flask web app on `http://localhost:5001`
 - a local MongoDB container on `mongodb://localhost:27017`
 
 The app container serves both the API and the frontend from the same service.
@@ -74,7 +74,6 @@ GitHub Actions runs on every push and pull request:
 Workflow file:
 
 - `.github/workflows/ci.yml`
-
 
 
 
