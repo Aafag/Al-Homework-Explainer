@@ -10,7 +10,7 @@ from .routes import api
 from .services.gemini_service import GeminiService
 
 
-def create_app() -> Flask:
+def create_app(config_overrides: dict | None = None) -> Flask:
     project_root = Path(__file__).resolve().parent.parent
     frontend_dir = project_root / "frontend"
     load_dotenv(project_root / ".env")
@@ -22,20 +22,28 @@ def create_app() -> Flask:
         static_url_path="",
     )
     app.config.from_object(Config)
+    if config_overrides:
+        app.config.update(config_overrides)
 
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    init_db(app)
-    app.gemini_service = GeminiService(
-        api_key=app.config["GEMINI_API_KEY"],
-        model=app.config["GEMINI_MODEL"],
-        api_base=app.config["GEMINI_API_BASE"],
-        auth_mode=app.config["GEMINI_AUTH_MODE"],
-        vertex_access_token=app.config["VERTEX_ACCESS_TOKEN"],
-        vertex_project_id=app.config["VERTEX_PROJECT_ID"],
-        vertex_location=app.config["VERTEX_LOCATION"],
-        vertex_use_project_endpoint=app.config["VERTEX_USE_PROJECT_ENDPOINT"],
-    )
+    app.mongo_client = None
+    app.db = None
+    app.questions_collection = None
+    app.gemini_service = None
+
+    if app.config["INIT_EXTERNAL_SERVICES"]:
+        init_db(app)
+        app.gemini_service = GeminiService(
+            api_key=app.config["GEMINI_API_KEY"],
+            model=app.config["GEMINI_MODEL"],
+            api_base=app.config["GEMINI_API_BASE"],
+            auth_mode=app.config["GEMINI_AUTH_MODE"],
+            vertex_access_token=app.config["VERTEX_ACCESS_TOKEN"],
+            vertex_project_id=app.config["VERTEX_PROJECT_ID"],
+            vertex_location=app.config["VERTEX_LOCATION"],
+            vertex_use_project_endpoint=app.config["VERTEX_USE_PROJECT_ENDPOINT"],
+        )
 
     app.register_blueprint(api)
 
