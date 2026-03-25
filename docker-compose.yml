@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/ai_homework_explainer
+      MONGODB_DB: ai_homework_explainer
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash-lite}
+      GEMINI_API_BASE: ${GEMINI_API_BASE:-https://aiplatform.googleapis.com/v1}
+      GEMINI_AUTH_MODE: ${GEMINI_AUTH_MODE:-api_key}
+      VERTEX_ACCESS_TOKEN: ${VERTEX_ACCESS_TOKEN:-}
+      VERTEX_PROJECT_ID: ${VERTEX_PROJECT_ID:-}
+      VERTEX_LOCATION: ${VERTEX_LOCATION:-us-central1}
+      VERTEX_USE_PROJECT_ENDPOINT: ${VERTEX_USE_PROJECT_ENDPOINT:-0}
+      MAX_QUESTION_LENGTH: ${MAX_QUESTION_LENGTH:-2000}
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

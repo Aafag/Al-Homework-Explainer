@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 
 from .db import init_db
@@ -12,10 +12,15 @@ from .services.gemini_service import GeminiService
 
 def create_app() -> Flask:
     project_root = Path(__file__).resolve().parent.parent
+    frontend_dir = project_root / "frontend"
     load_dotenv(project_root / ".env")
     from .config import Config
 
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder=str(frontend_dir),
+        static_url_path="",
+    )
     app.config.from_object(Config)
 
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -36,6 +41,14 @@ def create_app() -> Flask:
 
     @app.get("/")
     def index():
-        return jsonify({"message": "AI Homework Explainer backend is running."})
+        return app.send_static_file("index.html")
+
+    @app.get("/<path:path>")
+    def static_proxy(path: str):
+        asset_path = frontend_dir / path
+        if asset_path.is_file():
+            return send_from_directory(frontend_dir, path)
+
+        return app.send_static_file("index.html")
 
     return app
