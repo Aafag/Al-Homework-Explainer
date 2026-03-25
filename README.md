@@ -63,6 +63,8 @@ This starts:
 
 The app container serves both the API and the frontend from the same service.
 
+If your team already uses a shared MongoDB Atlas database, set `MONGODB_URI` in your local `.env` before running Docker Compose. The app will use that shared database and you will see the same question history. If `MONGODB_URI` is not set, Docker Compose falls back to the local MongoDB container.
+
 ### CI pipeline
 
 GitHub Actions runs on every push and pull request:
@@ -74,7 +76,6 @@ GitHub Actions runs on every push and pull request:
 Workflow file:
 
 - `.github/workflows/ci.yml`
-
 
 
 

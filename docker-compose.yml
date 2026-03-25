@@ -5,8 +5,8 @@ services:
       - "5001:5000"
     environment:
       PORT: 5000
-      MONGODB_URI: mongodb://mongo:27017/ai_homework_explainer
-      MONGODB_DB: ai_homework_explainer
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/ai_homework_explainer}
+      MONGODB_DB: ${MONGODB_DB:-deploymentdb}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash-lite}
       GEMINI_API_BASE: ${GEMINI_API_BASE:-https://aiplatform.googleapis.com/v1}
