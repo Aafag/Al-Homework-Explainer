@@ -53,6 +53,52 @@ Week 13 – Deployment
 •	Test live deployment
 •	Prepare presentation
 
+## DevOps Setup
+
+### Local Docker workflow
+
+Build and run the full stack with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+This starts:
+
+- the Flask web app on `http://localhost:5000`
+- a local MongoDB container on `mongodb://localhost:27017`
+
+The app container serves both the API and the frontend from the same service.
+
+### CI pipeline
+
+GitHub Actions runs on every push and pull request:
+
+- installs Python dependencies
+- runs `pytest`
+- builds the Docker image
+
+Workflow file:
+
+- `.github/workflows/ci.yml`
+
+### Render deployment
+
+This repo includes a `render.yaml` Blueprint for deploying a single Python web service on Render.
+
+Important deployment notes:
+
+- Render installs dependencies with `pip install -r requirements.txt`
+- Render starts the app with `gunicorn --bind 0.0.0.0:$PORT run:app`
+- the frontend is served by Flask, so only one web service is required
+- `MONGODB_URI` and `GEMINI_API_KEY` must be provided as secrets in Render and must never be committed
+
+If you create the service from the Blueprint:
+
+1. Connect the GitHub repo in Render.
+2. Apply `render.yaml`.
+3. Enter secret values for `MONGODB_URI` and `GEMINI_API_KEY`.
+4. Let Render deploy from the default branch after CI checks pass.
 
 
 
