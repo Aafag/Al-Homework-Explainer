@@ -79,4 +79,5 @@ Workflow file:
 
 - `.github/workflows/ci.yml`
 
+Note: keep secrets such as `MONGODB_URI` and `GEMINI_API_KEY` only in local `.env` files and never commit them.
 
