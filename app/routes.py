@@ -13,7 +13,14 @@ def gemini_error_response(exc: RequestException) -> tuple:
     status_code = getattr(getattr(exc, "response", None), "status_code", None)
 
     if status_code == 401:
-        return jsonify({"error": "Gemini authentication failed. Check GEMINI_KEY or GEMINI_API_KEY."}), 502
+        return jsonify(
+            {
+                "error": (
+                    "Gemini authentication failed. Check GEMINI_AUTH_MODE and credentials "
+                    "(GEMINI_KEY/GEMINI_API_KEY or OAuth token/ADC)."
+                )
+            }
+        ), 502
     if status_code == 403:
         return jsonify({"error": "Gemini API access denied for this key or model."}), 502
     if status_code == 429:

@@ -25,6 +25,11 @@ def create_app() -> Flask:
         api_key=app.config["GEMINI_API_KEY"],
         model=app.config["GEMINI_MODEL"],
         api_base=app.config["GEMINI_API_BASE"],
+        auth_mode=app.config["GEMINI_AUTH_MODE"],
+        vertex_access_token=app.config["VERTEX_ACCESS_TOKEN"],
+        vertex_project_id=app.config["VERTEX_PROJECT_ID"],
+        vertex_location=app.config["VERTEX_LOCATION"],
+        vertex_use_project_endpoint=app.config["VERTEX_USE_PROJECT_ENDPOINT"],
     )
 
     app.register_blueprint(api)
