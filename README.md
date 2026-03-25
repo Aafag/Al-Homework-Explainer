@@ -58,12 +58,14 @@ docker compose up --build
 
 This starts:
 
-- the Flask web app on `http://localhost:5001`
+- the Flask web app on `http://localhost:5000` by default
 - a local MongoDB container on `mongodb://localhost:27017`
 
 The app container serves both the API and the frontend from the same service.
 
 If your team already uses a shared MongoDB Atlas database, set `MONGODB_URI` in your local `.env` before running Docker Compose. The app will use that shared database and you will see the same question history. If `MONGODB_URI` is not set, Docker Compose falls back to the local MongoDB container.
+
+If port `5000` is already used on your machine, set `APP_PORT` in `.env`. For example, use `APP_PORT=5001` and open `http://localhost:5001`.
 
 ### CI pipeline
 
@@ -76,6 +78,5 @@ GitHub Actions runs on every push and pull request:
 Workflow file:
 
 - `.github/workflows/ci.yml`
-
 
 
