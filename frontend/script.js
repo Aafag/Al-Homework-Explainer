@@ -1,6 +1,46 @@
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "/api";
 
 document.getElementById("askBtn").addEventListener("click", askQuestion);
+
+marked.setOptions({
+    breaks: true,
+    gfm: true
+});
+
+function escapeHtml(text) {
+    return text
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function renderMarkdown(markdown) {
+    const rawHtml = marked.parse(markdown || "");
+    return DOMPurify.sanitize(rawHtml);
+}
+
+function renderMath(container) {
+    if (typeof renderMathInElement !== "function") {
+        return;
+    }
+
+    renderMathInElement(container, {
+        delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false
+    });
+}
+
+function buildAnswerCard(title, content) {
+    return `
+        <h3>${title}</h3>
+        <div class="answer-content">${renderMarkdown(content)}</div>
+    `;
+}
 
 // Ask question
 async function askQuestion() {
@@ -29,10 +69,8 @@ async function askQuestion() {
             throw new Error(data.error || "Something went wrong");
         }
 
-        resultDiv.innerHTML = `
-            <h3>📖 Explanation</h3>
-            <p>${data.explanation}</p>
-        `;
+        resultDiv.innerHTML = buildAnswerCard("📖 Explanation", data.explanation);
+        renderMath(resultDiv);
 
         document.getElementById("questionInput").value = "";
         loadHistory();
@@ -57,10 +95,14 @@ async function loadHistory() {
             div.className = "history-item";
 
             div.innerHTML = `
-                <strong>Q:</strong> ${item.question}
-                <strong>A:</strong> ${item.explanation}
+                <strong>Q:</strong>
+                <p class="question-text">${escapeHtml(item.question)}</p>
+                <strong>A:</strong>
+                <div class="answer-content">${renderMarkdown(item.explanation)}</div>
                 <small>🕒 ${new Date(item.created_at).toLocaleString()}</small>
             `;
+
+            renderMath(div);
 
             historyDiv.appendChild(div);
         });

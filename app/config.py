@@ -2,6 +2,8 @@ import os
 
 
 class Config:
+    INIT_EXTERNAL_SERVICES = os.getenv("INIT_EXTERNAL_SERVICES", "1") == "1"
+
     MONGODB_URI = os.getenv("MONGODB_URI", "")
     MONGODB_DB = os.getenv("MONGODB_DB", "ai_homework_explainer")
 

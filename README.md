@@ -26,13 +26,11 @@ Containerization
 •	Docker
 CI/CD
 •	GitHub Actions
-Deployment
-•	Render
 
 Team Members and Roles:
 Kareem (60302080) is the Backend Developer. He is responsible for developing the backend API using Flask, implementing routes for submitting questions and retrieving saved questions, and integrating the AI model to generate explanations.
 Aafag (60097832) is the Frontend Developer. She is responsible for designing and implementing the web interface, creating the input form for homework questions, and displaying the AI-generated explanations and saved questions.
-Sulistianto (60301414) handles DevOps and Full-Stack Support. He is responsible for configuring Docker for containerization, setting up the CI/CD pipeline using GitHub Actions, deploying the application to the cloud, and assisting with testing and integration.
+Sulistianto (60301414) handles DevOps and Full-Stack Support. He is responsible for configuring Docker for containerization, setting up the CI pipeline using GitHub Actions, and assisting with testing and integration.
 
 Project Timeline
 Week 11 – Setup and Proposal
@@ -47,15 +45,39 @@ Week 12 – Development
 •	Build frontend interface
 •	Write unit tests
 •	Setup CI pipeline
-Week 13 – Deployment
-•	Complete CI/CD pipeline
-•	Deploy application to cloud
-•	Test live deployment
-•	Prepare presentation
 
+## DevOps Setup
 
+### Local Docker workflow
 
+Build and run the full stack with Docker Compose:
 
+```bash
+docker compose up --build
+```
 
+This starts:
 
+- the Flask web app on `http://localhost:5000` by default
+- a local MongoDB container on `mongodb://localhost:27017`
+
+The app container serves both the API and the frontend from the same service.
+
+If your team already uses a shared MongoDB Atlas database, set `MONGODB_URI` in your local `.env` before running Docker Compose. The app will use that shared database and you will see the same question history. If `MONGODB_URI` is not set, Docker Compose falls back to the local MongoDB container.
+
+If port `5000` is already used on your machine, set `APP_PORT` in `.env`. For example, use `APP_PORT=5001` and open `http://localhost:5001`.
+
+### CI pipeline
+
+GitHub Actions runs on every push and pull request:
+
+- installs Python dependencies
+- runs `pytest`
+- builds the Docker image
+
+Workflow file:
+
+- `.github/workflows/ci.yml`
+
+Note: keep secrets such as `MONGODB_URI` and `GEMINI_API_KEY` only in local `.env` files and never commit them.
 
