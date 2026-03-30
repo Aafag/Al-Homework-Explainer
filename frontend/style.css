@@ -1,0 +1,135 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+textarea {
+    height: 120px;
+    padding: 10px;
+    font-size: 16px;
+    resize: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 12px;
+    font-size: 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+.card {
+    background: white;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.history-item {
+    background: white;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border-left: 4px solid #007bff;
+}
+
+
+.history-item strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.question-text {
+    margin: 0 0 12px;
+    white-space: pre-wrap;
+}
+
+.answer-content {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.answer-content > :first-child {
+    margin-top: 0;
+}
+
+.answer-content > :last-child {
+    margin-bottom: 0;
+}
+
+.answer-content p,
+.answer-content ul,
+.answer-content ol,
+.answer-content pre,
+.answer-content blockquote {
+    margin: 0 0 12px;
+}
+
+.answer-content h1,
+.answer-content h2,
+.answer-content h3,
+.answer-content h4 {
+    margin: 16px 0 10px;
+}
+
+.answer-content ul,
+.answer-content ol {
+    padding-left: 22px;
+}
+
+.answer-content code {
+    background: #eef2f7;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.95em;
+}
+
+.answer-content pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.answer-content pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+}
