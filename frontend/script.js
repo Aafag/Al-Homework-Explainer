@@ -70,5 +70,6 @@ async function loadHistory() {
     }
 }
 
+
 // Load history on page load
 window.onload = loadHistory;
