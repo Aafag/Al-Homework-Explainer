@@ -26,9 +26,7 @@ def create_app(config_overrides: dict | None = None) -> Flask:
 
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    app.mongo_client = None
-    app.db = None
-    app.questions_collection = None
+    app.db_conn = None
     app.gemini_service = None
 
     if app.config["INIT_EXTERNAL_SERVICES"]:
