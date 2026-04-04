@@ -43,6 +43,11 @@ Week 12 – Development
 •	Build frontend interface
 •	Write unit tests
 •	Setup CI pipeline
+Week 13 – Deployment
+•	Publish the production image to Docker Hub
+•	Trigger Render deployment after CI passes
+•	Test the live deployment
+•	Prepare the final demo and presentation
 
 ## DevOps Setup
 
@@ -80,3 +85,49 @@ Workflow file:
 - `.github/workflows/ci.yml`
 
 Note: keep secrets such as `MONGODB_URI` and `GEMINI_API_KEY` only in local `.env` files and never commit them.
+
+## Week 13 Deployment
+
+### Architecture overview
+
+- The frontend and Flask API are served from the same container image.
+- MongoDB Atlas stores the submitted questions and AI explanations.
+- Gemini generates the homework explanations.
+- GitHub Actions validates every branch update, then pushes the production image to Docker Hub on `main`.
+- Render pulls the latest Docker Hub image when the deploy hook is triggered.
+
+### Production setup
+
+The Week 13 deployment flow uses:
+
+- Docker Hub image: `docker.io/sulistianto/ai-homework-explainer:latest`
+- Render blueprint: `render.yaml`
+- GitHub Actions secrets:
+  - `DOCKERHUB_USERNAME`
+  - `DOCKERHUB_TOKEN`
+  - `RENDER_DEPLOY_HOOK_URL`
+
+Render environment variables:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+- `GEMINI_API_BASE`
+- `MAX_QUESTION_LENGTH`
+- `FLASK_DEBUG`
+- `INIT_EXTERNAL_SERVICES`
+
+The current blueprint assumes the Docker Hub image is public. If the image is kept private, add Docker Hub registry credentials in Render before the first deploy.
+
+### Release flow
+
+1. Push the finished work to `main`.
+2. GitHub Actions runs `ruff`, `pytest`, Docker build, and the health-check smoke test.
+3. The release job logs in to Docker Hub and pushes `latest` plus a short SHA tag.
+4. GitHub Actions calls the Render deploy hook.
+5. Render redeploys the latest image and exposes the updated site.
+
+### Live URL
+
+Add the public Render URL here after the first successful production deployment so the team can reference the same link during presentation week.
