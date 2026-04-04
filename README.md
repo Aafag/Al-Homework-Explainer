@@ -13,19 +13,17 @@ Features
 
 Tech Stack:
 Frontend
-•	HTML
-•	CSS
-•	JavaScript
+•	HTML, CSS, JavaScript — lightweight and fast to iterate for a small student-facing interface
 Backend
-•	Python (Flask)
+•	Python (Flask) — simple API structure, quick setup, and a good fit for the project timeline
 AI Integration
-•	Gemini API
+•	Gemini API — provides the required LLM-powered explanation feature for homework help
 Database
-•	MongoDB Atlas
+•	MongoDB Atlas — managed persistent storage for saved questions and explanations
 Containerization
-•	Docker
+•	Docker — consistent local runtime and buildable container image from the repo root
 CI/CD
-•	GitHub Actions
+•	GitHub Actions — required course-standard automation for validation on push and pull request
 
 Team Members and Roles:
 Kareem (60302080) is the Backend Developer. He is responsible for developing the backend API using Flask, implementing routes for submitting questions and retrieving saved questions, and integrating the AI model to generate explanations.
@@ -72,11 +70,12 @@ If port `5000` is already used on your machine, set `APP_PORT` in `.env`. For ex
 GitHub Actions runs on every push and pull request:
 
 - installs Python dependencies
+- runs `ruff` static analysis
 - runs `pytest`
 - builds the Docker image
+- starts the built container and checks `/api/health`
 
 Workflow file:
 
 - `.github/workflows/ci.yml`
-
 
