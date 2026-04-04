@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ai-homework-explainer
+    runtime: image
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    image:
+      url: docker.io/sulistianto/ai-homework-explainer:latest
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: deploymentdb
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash-lite
+      - key: GEMINI_API_BASE
+        value: https://aiplatform.googleapis.com/v1
+      - key: MAX_QUESTION_LENGTH
+        value: "2000"
+      - key: FLASK_DEBUG
+        value: "0"
+      - key: INIT_EXTERNAL_SERVICES
+        value: "1"
