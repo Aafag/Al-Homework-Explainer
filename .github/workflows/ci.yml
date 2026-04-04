@@ -21,10 +21,28 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt pytest
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run static analysis
+        run: python -m ruff check .
 
       - name: Run test suite
         run: python -m pytest
 
       - name: Build Docker image
         run: docker build -t ai-homework-explainer .
+
+      - name: Smoke test container health endpoint
+        run: |
+          docker run -d --rm --name ai-homework-explainer-smoke -p 5000:5000 \
+            -e INIT_EXTERNAL_SERVICES=0 \
+            ai-homework-explainer
+          trap 'docker stop ai-homework-explainer-smoke' EXIT
+          for _ in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:5000/api/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs ai-homework-explainer-smoke
+          exit 1
