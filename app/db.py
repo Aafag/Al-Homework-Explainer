@@ -1,22 +1,31 @@
-from pymongo import MongoClient
-from pymongo.errors import PyMongoError
+import sqlite3
+
+
+def get_connection(db_path: str) -> sqlite3.Connection:
+    conn = sqlite3.connect(db_path, check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    return conn
 
 
 def init_db(app) -> None:
-    mongo_uri = app.config["MONGODB_URI"]
-    if not mongo_uri:
-        raise RuntimeError("MONGODB_URI is required.")
+    db_path = app.config["SQLITE_PATH"]
 
     try:
-        client = MongoClient(mongo_uri)
-        db = client[app.config["MONGODB_DB"]]
-        questions_collection = db["questions"]
+        conn = get_connection(db_path)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS questions (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                question    TEXT    NOT NULL,
+                explanation TEXT    NOT NULL,
+                created_at  TEXT    NOT NULL
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_created_at ON questions (created_at)")
+        conn.commit()
+    except sqlite3.Error as exc:
+        raise RuntimeError(f"SQLite initialization failed: {exc}") from exc
 
-        questions_collection.create_index("created_at")
-    except PyMongoError as exc:
-        raise RuntimeError(f"MongoDB initialization failed: {exc}") from exc
-
-    app.mongo_client = client
-    app.db = db
-    app.questions_collection = questions_collection
+    app.db_path = db_path
+    app.db_conn = conn
 

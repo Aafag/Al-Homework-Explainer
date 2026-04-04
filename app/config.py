@@ -4,8 +4,7 @@ import os
 class Config:
     INIT_EXTERNAL_SERVICES = os.getenv("INIT_EXTERNAL_SERVICES", "1") == "1"
 
-    MONGODB_URI = os.getenv("MONGODB_URI", "")
-    MONGODB_DB = os.getenv("MONGODB_DB", "ai_homework_explainer")
+    SQLITE_PATH = os.getenv("SQLITE_PATH", "ai_homework_explainer.db")
 
     GEMINI_API_KEY = os.getenv("GEMINI_KEY") or os.getenv("GEMINI_API_KEY", "")
     GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
