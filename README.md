@@ -19,7 +19,7 @@ Backend
 AI Integration
 •	Gemini API — provides the required LLM-powered explanation feature for homework help
 Database
-•	MongoDB Atlas — managed persistent storage for saved questions and explanations
+•	SQLite — simple file-based storage that keeps the backend setup lightweight
 Containerization
 •	Docker — consistent local runtime and buildable container image from the repo root
 CI/CD
@@ -62,11 +62,11 @@ docker compose up --build
 This starts:
 
 - the Flask web app on `http://localhost:5000` by default
-- a local MongoDB container on `mongodb://localhost:27017`
+- a persistent local SQLite database stored in the Docker volume
 
 The app container serves both the API and the frontend from the same service.
 
-If your team already uses a shared MongoDB Atlas database, set `MONGODB_URI` in your local `.env` before running Docker Compose. The app will use that shared database and you will see the same question history. If `MONGODB_URI` is not set, Docker Compose falls back to the local MongoDB container.
+The compose setup now uses SQLite directly. By default the database file is mounted at `/app/data/ai_homework_explainer.db` inside the container so question history survives container restarts on the same machine.
 
 If port `5000` is already used on your machine, set `APP_PORT` in `.env`. For example, use `APP_PORT=5001` and open `http://localhost:5001`.
 
@@ -84,14 +84,14 @@ Workflow file:
 
 - `.github/workflows/ci.yml`
 
-Note: keep secrets such as `MONGODB_URI` and `GEMINI_API_KEY` only in local `.env` files and never commit them.
+Note: keep secrets such as `GEMINI_API_KEY` only in local `.env` files and never commit them.
 
 ## Week 13 Deployment
 
 ### Architecture overview
 
 - The frontend and Flask API are served from the same container image.
-- MongoDB Atlas stores the submitted questions and AI explanations.
+- SQLite stores submitted questions and explanations in a local database file.
 - Gemini generates the homework explanations.
 - GitHub Actions validates every branch update, then pushes the production image to Docker Hub on `main`.
 - Render pulls the latest Docker Hub image when the deploy hook is triggered.
@@ -109,8 +109,7 @@ The Week 13 deployment flow uses:
 
 Render environment variables:
 
-- `MONGODB_URI`
-- `MONGODB_DB`
+- `SQLITE_PATH`
 - `GEMINI_API_KEY`
 - `GEMINI_MODEL`
 - `GEMINI_API_BASE`
@@ -119,6 +118,12 @@ Render environment variables:
 - `INIT_EXTERNAL_SERVICES`
 
 The current blueprint assumes the Docker Hub image is public. If the image is kept private, add Docker Hub registry credentials in Render before the first deploy.
+
+SQLite note for Render:
+
+- the app will run with `SQLITE_PATH=ai_homework_explainer.db`
+- on Render's free web service filesystem, SQLite data is not guaranteed to persist across full redeploys or instance replacement
+- if the team needs durable hosted history, move back to an external database or attach persistent disk storage on a supported Render plan
 
 ### Release flow
 
