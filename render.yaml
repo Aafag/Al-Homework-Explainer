@@ -5,11 +5,15 @@ services:
     plan: free
     region: oregon
     healthCheckPath: /api/health
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1
     image:
       url: docker.io/sulistianto/ai-homework-explainer:latest
     envVars:
       - key: SQLITE_PATH
-        value: ai_homework_explainer.db
+        value: /var/data/ai_homework_explainer.db
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
