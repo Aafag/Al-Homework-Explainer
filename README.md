@@ -135,4 +135,4 @@ SQLite note for Render:
 
 ### Live URL
 
-Add the public Render URL here after the first successful production deployment so the team can reference the same link during presentation week.
+- Live app: https://ai-homework-explainer.onrender.com
