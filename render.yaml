@@ -8,10 +8,8 @@ services:
     image:
       url: docker.io/sulistianto/ai-homework-explainer:latest
     envVars:
-      - key: MONGODB_URI
-        sync: false
-      - key: MONGODB_DB
-        value: deploymentdb
+      - key: SQLITE_PATH
+        value: ai_homework_explainer.db
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
