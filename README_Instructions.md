@@ -96,20 +96,43 @@ Show:
 
 ## 5. Trigger The Workflow Live
 
-Make one very small frontend text change in `frontend/index.html`, then run:
+Create a small demo branch, make one tiny frontend text change, push the branch, then merge it to `main`.
+
+Suggested branch name:
+
+```bash
+git checkout -b demo/workflow-trigger
+```
+
+Make one very small text change in `frontend/index.html`, then run:
 
 ```bash
 git add frontend/index.html
 git commit -m "demo: trigger actions workflow"
-git push origin main
+git push origin demo/workflow-trigger
 ```
 
-Then show:
+Then open GitHub and:
 
-1. the new workflow run starting in GitHub Actions
-2. the running jobs
-3. the deploy after the workflow passes
-4. the updated live site after refresh
+1. show the branch push triggering GitHub Actions
+2. show the workflow run on the branch
+3. open the branch or pull request
+4. merge the branch into `main`
+5. show the new workflow run triggered on `main`
+6. show the deploy after the `main` workflow passes
+7. refresh the live site and show the visible text change
+
+If you want to create the pull request from the terminal:
+
+```bash
+gh pr create --base main --head demo/workflow-trigger --title "demo: trigger workflow" --body "Small frontend text change for live CI/CD demo."
+```
+
+What to explain:
+
+- branch pushes trigger the validation workflow
+- merging to `main` triggers the production path
+- the `main` workflow is the one that can publish and deploy
 
 ## Backup Plan
 
