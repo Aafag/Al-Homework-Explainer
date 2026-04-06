@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 COPY frontend ./frontend
-COPY run.py README.md README_BACKEND.md ./
+COPY run.py README.md README_Instructions.md ./
 
 EXPOSE 5000
 
