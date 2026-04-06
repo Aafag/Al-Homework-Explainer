@@ -1,5 +1,92 @@
 # Al-Homework-Explainer
 
+## Run The App
+
+### Option 1: Run locally with Python
+
+1. Create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+3. Create a local environment file:
+
+```bash
+cp .env.example .env
+```
+
+4. Update `.env` with at least:
+
+```env
+SQLITE_PATH=ai_homework_explainer.db
+GEMINI_API_KEY=your_api_key_here
+PORT=5000
+```
+
+5. Start the app:
+
+```bash
+python3 run.py
+```
+
+6. Open the app in your browser:
+
+```text
+http://localhost:5000
+```
+
+If port `5000` is already in use, start it on another port:
+
+```bash
+PORT=5001 python3 run.py
+```
+
+Then open `http://localhost:5001`.
+
+### Option 2: Run with Docker
+
+Build the image:
+
+```bash
+docker build -t ai-homework-explainer .
+```
+
+Run the container and publish the app to localhost:
+
+```bash
+docker run --rm -p 5000:5000 --env-file .env ai-homework-explainer
+```
+
+Then open:
+
+```text
+http://localhost:5000
+```
+
+If port `5000` is already in use on your machine, use a different host port:
+
+```bash
+docker run --rm -p 5001:5000 --env-file .env ai-homework-explainer
+```
+
+Then open `http://localhost:5001`.
+
+### Option 3: Run with Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Then open `http://localhost:5000` unless you changed `APP_PORT` in `.env`.
+
 App Description
 The AI Homework Explainer is an online program that is intended to assist learners in finding answers to their homework assignments easier. The application allows students to paste or type a question about a homework into the application and the system will create a clear explanation of the concept or solution using an AI language model.
 This application is aimed at assisting students in learning and understanding challenging material rather than being given the ultimate solution. The application will also save the past questions and clarification so that the students are able to revise them later during their study.
