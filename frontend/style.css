@@ -5,17 +5,28 @@ body {
     padding: 0;
 }
 
+/* Container */
 .container {
     max-width: 800px;
     margin: 40px auto;
     padding: 20px;
 }
 
+/* Title */
 h1 {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
+/* Group name */
+.team-name {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* Input Section */
 .input-container {
     display: flex;
     flex-direction: column;
@@ -31,6 +42,7 @@ textarea {
     border: 1px solid #ccc;
 }
 
+/* Button */
 button {
     padding: 12px;
     font-size: 16px;
@@ -46,11 +58,13 @@ button:hover {
     background: #0056b3;
 }
 
+/* Cards (Result + History) */
 .card {
     background: white;
     margin-top: 20px;
     padding: 15px;
-    border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .card h3 {
@@ -61,25 +75,28 @@ button:hover {
     display: none;
 }
 
+/* History items */
 .history-item {
     background: white;
     padding: 10px;
     margin-top: 10px;
-    border-radius: 5px;
+    border-radius: 6px;
     border-left: 4px solid #007bff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
-
 
 .history-item strong {
     display: block;
     margin-bottom: 5px;
 }
 
+/* Question text */
 .question-text {
     margin: 0 0 12px;
     white-space: pre-wrap;
 }
 
+/* Answer styling */
 .answer-content {
     line-height: 1.6;
     overflow-wrap: anywhere;
@@ -113,6 +130,7 @@ button:hover {
     padding-left: 22px;
 }
 
+/* Inline code */
 .answer-content code {
     background: #eef2f7;
     border-radius: 4px;
@@ -120,6 +138,7 @@ button:hover {
     font-size: 0.95em;
 }
 
+/* Code block */
 .answer-content pre {
     background: #111827;
     color: #f9fafb;
