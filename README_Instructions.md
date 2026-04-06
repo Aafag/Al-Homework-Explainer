@@ -164,6 +164,42 @@ Open GitHub and navigate to:
 - Repository `Actions` tab
 - The `CI/CD` workflow
 
+### How To Trigger The Workflow Live
+
+Use one very small visible frontend change so the instructor can see the workflow start and then see the deployed result later.
+
+Safe examples:
+
+- change one heading in `frontend/index.html`
+- change one button label in `frontend/index.html`
+- change one short helper sentence in the UI
+
+Suggested live trigger steps:
+
+1. Open the current live site and show its current text.
+2. Make one small text change locally.
+3. Commit the change.
+4. Push the change to `main`.
+5. Open the `Actions` tab immediately.
+6. Show the new workflow run starting from that push.
+7. Open the running job and show the steps in progress.
+8. After the workflow completes, show Render redeploying.
+9. Refresh the live site and show the visible text change.
+
+Commands for the live trigger:
+
+```bash
+git add frontend/index.html
+git commit -m "demo: trigger ci workflow"
+git push origin main
+```
+
+What to say:
+
+- "I am making a very small frontend text change so I can safely trigger the pipeline live."
+- "This push starts GitHub Actions automatically because the workflow runs on push."
+- "After validation passes, the deployment flow publishes the container image and triggers Render."
+
 What to show in the workflow:
 
 1. Install dependencies
@@ -180,6 +216,13 @@ What to say:
 - "Every push and pull request runs the validation pipeline."
 - "The workflow checks code quality, runs tests, builds Docker, and smoke-tests the container."
 - "Pushes to `main` can also publish the image and trigger deployment."
+
+### Important Demo Advice
+
+- Make the live trigger change before class and rehearse it once.
+- Keep the change harmless and easy to explain.
+- Do not change backend logic during the live trigger.
+- If you do not want to alter the final UI text permanently, prepare a tiny wording change that is still acceptable to keep.
 
 ## Short Demo Script
 
@@ -198,6 +241,7 @@ If something fails during the demo:
 - If Gemini fails, show the app UI and explain that the API key is environment-based
 - If Render is slow, show the Render dashboard and the last successful deployment
 - If GitHub Actions is loading slowly, show the workflow YAML file in the repository
+- If you cannot trigger a new run live, show the most recent successful run and explain the trigger step using the exact `git push` command
 
 ## Files To Know During The Demo
 
