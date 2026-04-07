@@ -27,6 +27,7 @@ def create_app(config_overrides: dict | None = None) -> Flask:
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     app.db_conn = None
+    app.db_client = None
     app.question_store = None
     app.gemini_service = None
 
