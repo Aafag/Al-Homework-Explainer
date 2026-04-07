@@ -1,0 +1,127 @@
+Live Demo - How to Trigger the CI/CD Pipeline
+
+Goal:
+Make a small visible UI change, push it to GitHub, show GitHub Actions running CI/CD, show Render deployment, then refresh the live app and confirm the change is in production.
+
+Before starting:
+- Make sure you are on the main branch.
+- Make sure your working tree is clean.
+- Make sure GitHub Actions secrets are already configured:
+  DOCKERHUB_USERNAME
+  DOCKERHUB_TOKEN
+  RENDER_DEPLOY_HOOK_URL
+- Make sure Render is already connected and the live URL works.
+
+1. Check the current branch and status
+
+Command:
+git status
+
+Expected:
+You should see that you are on main and there is nothing to commit.
+
+2. Make a small visible change
+
+Open:
+frontend/index.html
+
+Change something visible and small, for example:
+
+Before:
+<p class="team-name">Group 1</p>
+
+After:
+<p class="team-name">Group 1 - Live CI/CD Demo</p>
+
+Alternative command:
+python3 - <<'PY'
+from pathlib import Path
+path = Path("frontend/index.html")
+text = path.read_text()
+text = text.replace("Group 1", "Group 1 - Live CI/CD Demo", 1)
+path.write_text(text)
+PY
+
+3. Confirm the change locally in git
+
+Command:
+git diff frontend/index.html
+
+Expected:
+Git should show only the small text change in frontend/index.html.
+
+4. Commit the change
+
+Commands:
+git add frontend/index.html
+git commit -m "demo: trigger ci cd pipeline"
+
+5. Push the change to main
+
+Command:
+git push origin main
+
+What to explain:
+Pushing to main automatically starts the CI/CD workflow in GitHub Actions.
+
+6. Show GitHub Actions running
+
+Open GitHub:
+https://github.com/Aafag/Al-Homework-Explainer/actions
+
+Show:
+- The newest CI/CD workflow run at the top.
+- The test-and-build job running.
+- Static analysis.
+- Test suite.
+- Docker image build.
+- Container smoke test.
+- The publish-and-deploy job running after test-and-build passes.
+- The Docker Hub publish step.
+- The Trigger Render deployment step.
+
+Expected:
+Both jobs should go green.
+
+7. Show Render deployment
+
+Open Render:
+- Go to the ai-homework-explainer service.
+- Open the Events or Deploys section.
+
+Show:
+- A new deploy was triggered after the GitHub Actions workflow.
+- The deploy is building or has completed successfully.
+
+8. Refresh the live production URL
+
+Open the live Render app URL.
+
+Action:
+Refresh the page after the Render deploy finishes.
+
+Expected:
+The visible text change appears in production:
+Group 1 - Live CI/CD Demo
+
+9. Optional cleanup after the demo
+
+If you want to remove the temporary demo text, change it back:
+
+Before:
+<p class="team-name">Group 1 - Live CI/CD Demo</p>
+
+After:
+<p class="team-name">Group 1</p>
+
+Then run:
+git add frontend/index.html
+git commit -m "demo: restore original heading"
+git push origin main
+
+Presentation summary:
+- A tiny UI change was committed and pushed to main.
+- GitHub Actions automatically ran CI checks.
+- After CI passed, the CD job published the Docker image and triggered Render.
+- Render deployed the updated image.
+- Refreshing the production URL showed the change live.
