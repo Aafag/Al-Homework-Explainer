@@ -4,6 +4,7 @@ import os
 class Config:
     INIT_EXTERNAL_SERVICES = os.getenv("INIT_EXTERNAL_SERVICES", "1") == "1"
 
+    DATABASE_URL = os.getenv("DATABASE_URL", "")
     SQLITE_PATH = os.getenv("SQLITE_PATH", "ai_homework_explainer.db")
 
     GEMINI_API_KEY = os.getenv("GEMINI_KEY") or os.getenv("GEMINI_API_KEY", "")

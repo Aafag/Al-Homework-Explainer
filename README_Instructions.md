@@ -13,6 +13,7 @@
 - Make sure `.env` has a valid `GEMINI_API_KEY`
 - Make sure Docker Desktop is running
 - Make sure the Render URL works
+- Make sure the Render service has a `DATABASE_URL` environment variable from `ai-homework-explainer-db`
 - Make sure GitHub Actions is accessible
 - Prepare one sample question
 
@@ -78,6 +79,7 @@ Show:
 
 - the deployed site is live
 - the app loads in the browser
+- a submitted question remains in history after refreshing the page
 
 ## 4. Show GitHub Actions
 

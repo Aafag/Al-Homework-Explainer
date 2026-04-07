@@ -8,8 +8,10 @@ services:
     image:
       url: docker.io/sulistianto/ai-homework-explainer:latest
     envVars:
-      - key: SQLITE_PATH
-        value: ai_homework_explainer.db
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-homework-explainer-db
+          property: connectionString
       - key: GEMINI_API_KEY
         sync: false
       - key: GEMINI_MODEL
@@ -22,3 +24,7 @@ services:
         value: "0"
       - key: INIT_EXTERNAL_SERVICES
         value: "1"
+
+databases:
+  - name: ai-homework-explainer-db
+    plan: free

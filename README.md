@@ -10,7 +10,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 
 - Ask a homework question from a simple web interface
 - Generate an AI explanation using Gemini
-- Save question history in SQLite
+- Save question history locally in SQLite and on Render in Postgres
 - View previous questions and explanations
 - Run the same app locally, in Docker, and on Render
 
@@ -19,7 +19,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 - Frontend: HTML, CSS, JavaScript
 - Backend: Python with Flask
 - AI integration: Gemini API
-- Database: SQLite
+- Database: SQLite locally, Render Postgres in deployment
 - Containerization: Docker
 - CI/CD: GitHub Actions
 - Deployment: Render
@@ -30,7 +30,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 2. The user enters a homework question.
 3. Flask sends the question to Gemini.
 4. Gemini returns an explanation.
-5. The app saves the question and explanation in SQLite.
+5. The app saves the question and explanation in the configured database.
 6. The frontend displays the result and the saved history.
 
 ## Project Structure
@@ -41,6 +41,10 @@ The app is designed to help students learn, not just copy answers. A student ent
 - `Dockerfile`: container build definition
 - `render.yaml`: Render deployment config
 - `.github/workflows/ci.yml`: CI/CD pipeline
+
+## Database Behavior
+
+The app uses SQLite by default for local development. If `DATABASE_URL` is set, the app uses Postgres instead. The Render Blueprint in `render.yaml` creates a Render Postgres database and passes its connection string as `DATABASE_URL`, so saved questions survive web service restarts and redeploys.
 
 ## Demo And Run Notes
 

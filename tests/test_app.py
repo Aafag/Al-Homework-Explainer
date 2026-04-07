@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from requests import HTTPError
 
 from app import create_app
+from app.db import SQLiteQuestionStore
 
 
 class DummyResponse:
@@ -76,6 +77,7 @@ def create_test_client(
     )
     app.gemini_service = gemini_service or FakeGeminiService()
     app.db_conn = db_conn if db_conn is not None else make_in_memory_db()
+    app.question_store = SQLiteQuestionStore(app.db_conn)
 
     if seed_history and not isinstance(app.db_conn, FailingDB):
         seed_questions(app.db_conn)

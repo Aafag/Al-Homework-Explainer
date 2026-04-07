@@ -1,8 +1,9 @@
-import sqlite3
 from datetime import datetime, timezone
 
 from flask import Blueprint, current_app, jsonify, request
 from requests import RequestException
+
+from .db import DatabaseError
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -36,8 +37,8 @@ def serialize_question(row) -> dict:
     }
 
 
-def get_db() -> sqlite3.Connection:
-    return current_app.db_conn
+def get_store():
+    return current_app.question_store
 
 
 @api.get("/health")
@@ -69,14 +70,8 @@ def create_question() -> tuple:
     created_at = datetime.now(timezone.utc).isoformat()
 
     try:
-        db = get_db()
-        cursor = db.execute(
-            "INSERT INTO questions (question, explanation, created_at) VALUES (?, ?, ?)",
-            (question, explanation, created_at),
-        )
-        db.commit()
-        row_id = cursor.lastrowid
-    except sqlite3.Error as exc:
+        row_id = get_store().create_question(question, explanation, created_at)
+    except DatabaseError as exc:
         return jsonify({"error": f"Database write failed: {exc}"}), 500
 
     return jsonify({
@@ -97,13 +92,9 @@ def get_questions() -> tuple:
     limit = max(1, min(limit, 100))
 
     try:
-        db = get_db()
-        rows = db.execute(
-            "SELECT * FROM questions ORDER BY created_at DESC LIMIT ?",
-            (limit,),
-        ).fetchall()
+        rows = get_store().list_questions(limit)
         items = [serialize_question(row) for row in rows]
-    except sqlite3.Error as exc:
+    except DatabaseError as exc:
         return jsonify({"error": f"Database read failed: {exc}"}), 500
 
     return jsonify(items), 200
@@ -117,11 +108,8 @@ def get_question(question_id: str) -> tuple:
         return jsonify({"error": "Invalid question ID."}), 400
 
     try:
-        db = get_db()
-        row = db.execute(
-            "SELECT * FROM questions WHERE id = ?", (row_id,)
-        ).fetchone()
-    except sqlite3.Error as exc:
+        row = get_store().get_question(row_id)
+    except DatabaseError as exc:
         return jsonify({"error": f"Database read failed: {exc}"}), 500
 
     if not row:
