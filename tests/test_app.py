@@ -1,10 +1,10 @@
-import sqlite3
 from datetime import datetime, timedelta, timezone
 
+from bson import ObjectId
 from requests import HTTPError
 
 from app import create_app
-from app.db import SQLiteQuestionStore
+from app.db import DatabaseError
 
 
 class DummyResponse:
@@ -25,46 +25,51 @@ class FailingGeminiService:
         raise HTTPError(response=DummyResponse(self.status_code))
 
 
-def make_in_memory_db():
-    conn = sqlite3.connect(":memory:", check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    conn.execute("""
-        CREATE TABLE questions (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            question    TEXT NOT NULL,
-            explanation TEXT NOT NULL,
-            created_at  TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    return conn
+class InMemoryQuestionStore:
+    def __init__(self):
+        self.rows = []
+
+    def create_question(self, question, explanation, created_at):
+        row = {
+            "id": str(ObjectId()),
+            "question": question,
+            "explanation": explanation,
+            "created_at": created_at,
+        }
+        self.rows.append(row)
+        return row["id"]
+
+    def list_questions(self, limit):
+        return sorted(self.rows, key=lambda row: row["created_at"], reverse=True)[:limit]
+
+    def get_question(self, row_id):
+        return next((row for row in self.rows if row["id"] == row_id), None)
 
 
-def seed_questions(conn):
+def seed_questions(store):
     base_time = datetime.now(timezone.utc)
-    conn.execute(
-        "INSERT INTO questions (question, explanation, created_at) VALUES (?, ?, ?)",
-        ("Older question", "Old explanation", (base_time - timedelta(minutes=10)).isoformat()),
+    older_id = store.create_question(
+        "Older question",
+        "Old explanation",
+        (base_time - timedelta(minutes=10)).isoformat(),
     )
-    conn.execute(
-        "INSERT INTO questions (question, explanation, created_at) VALUES (?, ?, ?)",
-        ("Newer question", "New explanation", (base_time - timedelta(minutes=1)).isoformat()),
+    newer_id = store.create_question(
+        "Newer question",
+        "New explanation",
+        (base_time - timedelta(minutes=1)).isoformat(),
     )
-    conn.commit()
+    return {"older": older_id, "newer": newer_id}
 
 
-class FailingDB:
-    """Mimics a broken sqlite3.Connection for write-failure tests."""
-    def execute(self, *_a, **_kw):
-        raise sqlite3.Error("insert failed")
-    def commit(self):
-        pass
+class FailingStore:
+    def create_question(self, *_a, **_kw):
+        raise DatabaseError("insert failed")
 
 
 def create_test_client(
     *,
     gemini_service=None,
-    db_conn=None,
+    question_store=None,
     config_overrides=None,
     seed_history=True,
 ):
@@ -76,11 +81,10 @@ def create_test_client(
         }
     )
     app.gemini_service = gemini_service or FakeGeminiService()
-    app.db_conn = db_conn if db_conn is not None else make_in_memory_db()
-    app.question_store = SQLiteQuestionStore(app.db_conn)
+    app.question_store = question_store if question_store is not None else InMemoryQuestionStore()
 
-    if seed_history and not isinstance(app.db_conn, FailingDB):
-        seed_questions(app.db_conn)
+    if seed_history and not isinstance(app.question_store, FailingStore):
+        seed_questions(app.question_store)
 
     return app.test_client()
 
@@ -104,6 +108,7 @@ def test_create_question_success():
     response = client.post("/api/questions", json={"question": "Explain kinetic energy."})
     assert response.status_code == 201
     payload = response.get_json()
+    assert ObjectId.is_valid(payload["id"])
     assert payload["question"] == "Explain kinetic energy."
     assert "guided explanation" in payload["explanation"]
 
@@ -151,7 +156,7 @@ def test_create_question_handles_gemini_429():
 
 
 def test_create_question_handles_database_write_failure():
-    client = create_test_client(db_conn=FailingDB(), seed_history=False)
+    client = create_test_client(question_store=FailingStore(), seed_history=False)
     response = client.post("/api/questions", json={"question": "Explain AI"})
     assert response.status_code == 500
     assert "Database write failed" in response.get_json()["error"]
@@ -183,20 +188,19 @@ def test_get_question_rejects_invalid_id():
 
 def test_get_question_returns_404_when_missing():
     client = create_test_client()
-    response = client.get("/api/questions/99999")
+    response = client.get(f"/api/questions/{ObjectId()}")
     assert response.status_code == 404
     assert response.get_json()["error"] == "Question not found."
 
 
 def test_get_question_returns_existing_item():
-    conn = make_in_memory_db()
-    seed_questions(conn)
-    client = create_test_client(db_conn=conn, seed_history=False)
+    store = InMemoryQuestionStore()
+    ids = seed_questions(store)
+    client = create_test_client(question_store=store, seed_history=False)
 
-    row = conn.execute("SELECT id, question FROM questions LIMIT 1").fetchone()
-    response = client.get(f"/api/questions/{row['id']}")
+    response = client.get(f"/api/questions/{ids['older']}")
 
     assert response.status_code == 200
     payload = response.get_json()
-    assert payload["id"] == str(row["id"])
-    assert payload["question"] == row["question"]
+    assert payload["id"] == ids["older"]
+    assert payload["question"] == "Older question"

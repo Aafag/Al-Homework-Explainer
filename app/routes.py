@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 
+from bson import ObjectId
 from flask import Blueprint, current_app, jsonify, request
 from requests import RequestException
 
@@ -102,13 +103,11 @@ def get_questions() -> tuple:
 
 @api.get("/questions/<question_id>")
 def get_question(question_id: str) -> tuple:
-    try:
-        row_id = int(question_id)
-    except ValueError:
+    if not ObjectId.is_valid(question_id):
         return jsonify({"error": "Invalid question ID."}), 400
 
     try:
-        row = get_store().get_question(row_id)
+        row = get_store().get_question(question_id)
     except DatabaseError as exc:
         return jsonify({"error": f"Database read failed: {exc}"}), 500
 
