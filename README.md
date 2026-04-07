@@ -10,7 +10,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 
 - Ask a homework question from a simple web interface
 - Generate an AI explanation using Gemini
-- Save question history locally in SQLite and on Render in Postgres
+- Save question history in MongoDB Atlas
 - View previous questions and explanations
 - Run the same app locally, in Docker, and on Render
 
@@ -19,7 +19,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 - Frontend: HTML, CSS, JavaScript
 - Backend: Python with Flask
 - AI integration: Gemini API
-- Database: SQLite locally, Render Postgres in deployment
+- Database: MongoDB Atlas
 - Containerization: Docker
 - CI/CD: GitHub Actions
 - Deployment: Render
@@ -44,7 +44,7 @@ The app is designed to help students learn, not just copy answers. A student ent
 
 ## Database Behavior
 
-The app uses SQLite by default for local development. If `DATABASE_URL` is set, the app uses Postgres instead. The Render Blueprint in `render.yaml` creates a Render Postgres database and passes its connection string as `DATABASE_URL`, so saved questions survive web service restarts and redeploys.
+The app uses MongoDB Atlas for question history. Set `MONGODB_URI` and `MONGODB_DB_NAME` in the environment before starting the app. This works on Render Free because MongoDB Atlas stores the data outside the Render container, so history is not lost when Render restarts or redeploys the service.
 
 ## Demo And Run Notes
 

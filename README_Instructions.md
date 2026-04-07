@@ -10,10 +10,10 @@
 
 ## Before The Demo
 
-- Make sure `.env` has a valid `GEMINI_API_KEY`
+- Make sure `.env` has valid `MONGODB_URI` and `GEMINI_API_KEY` values
 - Make sure Docker Desktop is running
 - Make sure the Render URL works
-- Make sure the Render service has a `DATABASE_URL` environment variable from `ai-homework-explainer-db`
+- Make sure the Render service has `MONGODB_URI` set from MongoDB Atlas
 - Make sure GitHub Actions is accessible
 - Prepare one sample question
 
@@ -52,15 +52,20 @@ Show:
 
 ## 2. Run With Docker
 
+Recommended command for the demo:
+
 ```bash
-docker build -t ai-homework-explainer .
-docker run --rm -p 5000:5000 --env-file .env ai-homework-explainer
+docker compose up --build
 ```
+
+This uses the MongoDB Atlas connection from your `.env`, so Docker and Render can show the same saved question history.
+
+If your `.env` uses `GEMINI_KEY` instead of `GEMINI_API_KEY`, Docker Compose supports that too.
 
 If port `5000` is busy:
 
 ```bash
-docker run --rm -p 5001:5000 --env-file .env ai-homework-explainer
+APP_PORT=5001 docker compose up --build
 ```
 
 Open:
@@ -68,7 +73,35 @@ Open:
 - `http://localhost:5000`
 - or `http://localhost:5001`
 
+If you use plain `docker run`, pass the MongoDB environment variables:
+
+```bash
+docker build -t ai-homework-explainer .
+docker run --rm -p 5000:5000 --env-file .env \
+  -e MONGODB_URI="$MONGODB_URI" \
+  -e MONGODB_DB_NAME="${MONGODB_DB_NAME:-ai_homework_explainer}" \
+  ai-homework-explainer
+```
+
+If port `5000` is busy:
+
+```bash
+docker run --rm -p 5001:5000 --env-file .env \
+  -e MONGODB_URI="$MONGODB_URI" \
+  -e MONGODB_DB_NAME="${MONGODB_DB_NAME:-ai_homework_explainer}" \
+  ai-homework-explainer
+```
+
 ## 3. Show Render
+
+Before showing history persistence, confirm Render is using MongoDB Atlas:
+
+- Open the `ai-homework-explainer` web service in Render.
+- Go to the environment variables section.
+- Confirm `MONGODB_URI` exists and contains the MongoDB Atlas connection string.
+- Confirm `MONGODB_DB_NAME` is set to `ai_homework_explainer`.
+
+Do not commit the MongoDB URI into the repository. Add it only in Render as an environment variable. If the app cannot connect, check the Atlas database user's password and Atlas Network Access allowlist.
 
 Open:
 

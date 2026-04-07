@@ -4,7 +4,7 @@ import os
 class Config:
     INIT_EXTERNAL_SERVICES = os.getenv("INIT_EXTERNAL_SERVICES", "1") == "1"
 
-    MONGODB_URI = os.getenv("MONGODB_URI") or os.getenv("DATABASE_URL", "")
+    MONGODB_URI = os.getenv("MONGODB_URI", "")
     MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "ai_homework_explainer")
 
     GEMINI_API_KEY = os.getenv("GEMINI_KEY") or os.getenv("GEMINI_API_KEY", "")

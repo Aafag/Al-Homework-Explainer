@@ -19,7 +19,7 @@ class MongoQuestionStore:
         self.ObjectId = ObjectId
         self.DESCENDING = DESCENDING
         self.PyMongoError = PyMongoError
-        self.client = MongoClient(mongodb_uri)
+        self.client = MongoClient(mongodb_uri, serverSelectionTimeoutMS=5000)
         self.database = self.client[self._resolve_database_name(mongodb_uri, database_name)]
         self.collection = self.database["questions"]
 
