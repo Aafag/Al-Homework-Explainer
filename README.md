@@ -150,6 +150,6 @@ For the live presentation steps, localhost demo, Docker demo, Render demo, and G
 
 ## Team Roles
 
-- Kareem: backend development and API work
+- Kareem: backend development and API work. Note: Kareem previously used two GitHub accounts (KareemAbdalla and KareemAbdalla2). To avoid confusion and ensure consistent repository access, the team decided to remove KareemAbdalla2 and keep only KareemAbdalla.
 - Aafag: frontend development and UI
 - Sulistianto: Docker, CI/CD, deployment, and integration support
